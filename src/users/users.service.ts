@@ -9,24 +9,19 @@ export class UsersService {
         @InjectRepository(User)
         private usersRepository: Repository<User>
     ) { }
-    //Get all users
-    async findall(): Promise<User[]> {
-        return await this.usersRepository.find();
+    //Create user 
+    async create(user: User): Promise<User> {
+        const newUser = this.usersRepository.create(user);
+        return await this.usersRepository.save(newUser)
     }
-
     //Get one user
     async findOne(id: number): Promise<User> {
         return await this.usersRepository.findOne({ where: { id } });
     }
-
-    //Create user 
-    async create(user: User): Promise<User> {
-        const newUser = this.usersRepository.create(user);
-        console.log(newUser);
-
-        return await this.usersRepository.save(newUser)
+    //Get all users
+    async findall(): Promise<User[]> {
+        return await this.usersRepository.find();
     }
-
     //Update user 
     async update(id: number, user: User): Promise<User> {
         await this.usersRepository.update(id, user);

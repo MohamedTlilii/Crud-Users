@@ -4,11 +4,11 @@ import { User } from './entities/user.entity';
 @Controller('users')
 export class UsersController {
     constructor(private readonly usersService: UsersService) { }
-
-    //Get all users
-    @Get()
-    async findAll(): Promise<User[]> {
-        return await this.usersService.findall()
+    //Create user 
+    @Post()
+    async create(@Body() user: User): Promise<{ message: string, user: User }> {
+        const newUser = await this.usersService.create(user);
+        return { message: 'User created successfully', user: newUser };
     }
     //Get one user
     @Get(":id")
@@ -20,24 +20,25 @@ export class UsersController {
             return user;
         }
     }
-    //Create user 
-    @Post()
-    async create(@Body() user: User): Promise<User> {
-        return await this.usersService.create(user)
+    //Get all users
+    @Get()
+    async findAll(): Promise<User[]> {
+        return await this.usersService.findall()
     }
-    //Update user 
+    // Update user 
     @Put(":id")
-    async update(@Param('id') id: number, @Body() user: User): Promise<User> {
-        return this.usersService.update(id, user)
+    async update(@Param('id') id: number, @Body() user: User): Promise<{ message: string, user: User }> {
+        const updatedUser = await this.usersService.update(id, user);
+        return { message: 'User updated successfully', user: updatedUser };
     }
-    //Delete user 
+    // Delete user 
     @Delete(":id")
-    async delete(@Param('id') id: number): Promise<void> {
-        //Handle the error if user not found
-        const user = await this.usersService.findOne(id)
+    async delete(@Param('id') id: number): Promise<{ message: string }> {
+        const user = await this.usersService.findOne(id);
         if (!user) {
-            throw new Error('User not found')
+            throw new Error('User not found');
         }
-        return this.usersService.delete(id);
+        await this.usersService.delete(id);
+        return { message: 'User deleted successfully' };
     }
 }
